@@ -495,6 +495,9 @@ static bool Wayland_IsPreferred(struct wl_display *display)
 
     wl_registry_destroy(registry);
 
+    if (!preferred_data.has_fifo_v1) {
+        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "This compositor lacks support for the fifo-v1 protocol; falling back to XWayland for GPU performance reasons (set SDL_VIDEO_DRIVER=wayland to override)");
+    }
     return preferred_data.has_fifo_v1;
 }
 
@@ -629,6 +632,7 @@ static SDL_VideoDevice *Wayland_CreateDevice(bool require_preferred_protocols)
     device->HasScreenKeyboardSupport = Wayland_HasScreenKeyboardSupport;
     device->ShowWindowSystemMenu = Wayland_ShowWindowSystemMenu;
     device->SyncWindow = Wayland_SyncWindow;
+    device->SetWindowFocusable = Wayland_SetWindowFocusable;
 
 #ifdef SDL_USE_LIBDBUS
     if (SDL_SystemTheme_Init())
